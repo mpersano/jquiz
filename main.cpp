@@ -7,6 +7,9 @@
 #include <QCommandLineParser>
 #include <QDateTime>
 
+static const QString DeckPath = QStringLiteral("deck");
+static const QString DefaultQuestionsPath = QStringLiteral("questions");
+
 class Quiz : public QObject
 {
 	Q_OBJECT
@@ -90,8 +93,10 @@ QVariantMap Quiz::card() const
 bool Quiz::readCards(const QString& path)
 {
 	QFile file(path);
-	if (!file.open(QIODevice::ReadOnly|QIODevice::Text))
+	if (!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
+		qDebug() << "Failed to open" << path;
 		return false;
+	}
 
 	QTextStream stream(&file);
 	while (!stream.atEnd()) {
@@ -108,8 +113,6 @@ bool Quiz::readCards(const QString& path)
 
 	return true;
 }
-
-static const QString DeckPath = QStringLiteral("deck");
 
 void Quiz::readDeck()
 {
@@ -249,12 +252,15 @@ int main(int argc, char *argv[])
 	QCommandLineOption showMastered("m", "Show mastered cards.");
 	parser.addOption(showMastered);
 
+	QCommandLineOption questionsPath("p", "Questions path.", "path", DefaultQuestionsPath);
+	parser.addOption(questionsPath);
+
 	parser.process(app);
 
 	qsrand(QDateTime::currentDateTime().toTime_t());
 
 	Quiz quiz(parser.isSet(showMastered), false);
-	if (!quiz.readCards("questions"))
+	if (!quiz.readCards(parser.value(questionsPath)))
 		return -1;
 
 	QQuickView view;
