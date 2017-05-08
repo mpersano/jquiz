@@ -1,4 +1,3 @@
-#include <QDir>
 #include <QGuiApplication>
 #include <QQmlEngine>
 #include <QQmlFileSelector>
@@ -134,8 +133,7 @@ void Quiz::readDeck()
 						return c.kanji == kanji;
 					});
 
-			if (it != std::end(m_cards))
-			{
+			if (it != std::end(m_cards)) {
 				if (deck == QStringLiteral("R")) {
 					it->deck = Deck::Review;
 				} else if (deck == QStringLiteral("M")) {
