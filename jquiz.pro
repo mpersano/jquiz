@@ -5,6 +5,6 @@ TARGET = jquiz
 CONFIG += debug
 INCLUDEPATH += .
 
-HEADERS +=
-SOURCES += main.cpp
+HEADERS += quiz.h
+SOURCES += main.cpp quiz.cpp
 RESOURCES += jquiz.qrc
