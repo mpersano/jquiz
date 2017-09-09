@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
         cardSource = QStringLiteral("kanji.qml");
     else
         cardSource = QStringLiteral("reading.qml");
-qDebug() << cardSource;
 
     QQuickView view;
     view.engine()->rootContext()->setContextProperty(QStringLiteral("quiz"), &quiz);
