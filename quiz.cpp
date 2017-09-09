@@ -29,7 +29,7 @@ QVariantMap Quiz::card() const
     data.insert("kanji", m_curCard->kanji);
     data.insert("reading", m_curCard->reading);
     data.insert("eigo", m_curCard->eigo);
-    data.insert("deck", [&]() -> QChar {
+    data.insert("deck", [this]() -> QChar {
         switch (m_curCard->deck) {
         case Deck::Review:
             return 'R';
@@ -155,6 +155,13 @@ void Quiz::toggleCardReview()
         m_curCard->deck = Deck::Normal;
     else
         m_curCard->deck = Deck::Review;
+    emit cardChanged();
+    emit statusLineChanged();
+}
+
+void Quiz::setCardReview()
+{
+    m_curCard->deck = Deck::Review;
     emit cardChanged();
     emit statusLineChanged();
 }

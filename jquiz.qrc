@@ -1,5 +1,7 @@
 <RCC>
     <qresource>
         <file>jquiz.qml</file>
+        <file>kanji.qml</file>
+        <file>reading.qml</file>
     </qresource>
 </RCC>

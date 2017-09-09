@@ -3,60 +3,11 @@ import QtQuick 2.3
 Rectangle {
     width: 480
     height: 320
-    focus: true
     color: "white"
 
-    Rectangle {
-        id: card
-        anchors.fill: parent
-        state: "QUESTION"
-
-        Column {
-            id: kanjiReading
-            width: parent.width
-            anchors.centerIn: parent
-            visible: false
-
-            Text {
-                id: kanji
-                width: parent.width
-                text: quiz.card.kanji
-                font.pointSize: 60
-                horizontalAlignment: Text.AlignHCenter
-            }
-
-            Text {
-                id: reading
-                width: parent.width
-                text: quiz.card.reading
-                font.pointSize: 30
-                horizontalAlignment: Text.AlignHCenter
-            }
-        }
-
-        Text {
-            id: eigo
-            visible: true
-            anchors.fill: parent
-            text: quiz.card.eigo
-            font.pointSize: 30
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            wrapMode: Text.WordWrap
-        }
-
-        states: [
-            State {
-                name: "QUESTION"
-                PropertyChanges { target: kanjiReading; visible: false }
-                PropertyChanges { target: eigo; visible: true }
-            },
-            State {
-                name: "ANSWER"
-                PropertyChanges { target: kanjiReading; visible: true }
-                PropertyChanges { target: eigo; visible: false }
-            }
-        ]
+    Loader {
+        source: cardSource
+        focus: true
     }
 
     Text {
@@ -84,22 +35,5 @@ Rectangle {
         anchors.left: parent.left
         text: quiz.statusLine
         font.pointSize: 20
-    }
-
-    Keys.onPressed: {
-        if (event.key == Qt.Key_X) {
-            quiz.toggleCardMastered()
-        } else if (event.key == Qt.Key_M) {
-            quiz.toggleCardReview()
-        } else if (event.key == Qt.Key_P) {
-            quiz.toggleReviewOnly();
-        } else {
-            if (card.state == "QUESTION") {
-                card.state = "ANSWER";
-            } else {
-                card.state = "QUESTION"
-                quiz.nextCard()
-            }
-        }
     }
 }

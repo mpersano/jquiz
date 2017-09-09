@@ -16,6 +16,7 @@ public:
 
     Q_INVOKABLE void nextCard();
     Q_INVOKABLE void toggleCardReview();
+    Q_INVOKABLE void setCardReview();
     Q_INVOKABLE void toggleCardMastered();
     Q_INVOKABLE void toggleReviewOnly();
 
