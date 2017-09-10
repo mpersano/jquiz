@@ -57,9 +57,9 @@ Rectangle {
     Keys.onPressed: {
         if (event.key == Qt.Key_X) {
             quiz.toggleCardMastered()
-        } else if (event.key == Qt.Key_M) {
+        } else if (event.key == Qt.Key_Space) {
             quiz.toggleCardReview()
-        } else if (event.key == Qt.Key_P) {
+        } else if (event.key == Qt.Key_Tab) {
             quiz.toggleReviewOnly();
         } else {
             if (card.state == "QUESTION") {

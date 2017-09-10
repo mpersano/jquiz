@@ -51,6 +51,12 @@ Rectangle {
                         }
 
                         event.accepted = true
+                    } else if (event.key == Qt.Key_Space) {
+                        quiz.toggleCardReview();
+                        event.accepted = true
+                    } else if (event.key == Qt.Key_Tab) {
+                        quiz.toggleReviewOnly();
+                        event.accepted = true
                     }
                 }
             }
