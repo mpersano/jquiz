@@ -35,6 +35,8 @@ Rectangle {
             KanaTextEdit {
                 id: reading
                 font.pointSize: 30
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
                 focus: true
                 visible: true
 
