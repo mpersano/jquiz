@@ -13,12 +13,9 @@ void KanaTextEdit::convertToKana(bool fullText)
     QString kanaText = romajiToKana(text(), fullText);
 
     if (kanaText != text()) {
-        bool block = blockSignals(true);
-
+        const QSignalBlocker blocker(this);
         setText(kanaText);
         setCursorPosition(kanaText.size());
-
-        blockSignals(block);
     }
 }
 
