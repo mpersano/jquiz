@@ -1,4 +1,4 @@
-QT += qml quick quick-private multimedia
+QT += qml quick quick-private
 
 TEMPLATE = app
 TARGET = jquiz
