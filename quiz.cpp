@@ -4,8 +4,9 @@
 
 #include "quiz.h"
 
-namespace {
-const QString DeckPath("deck");
+static QString DeckPath()
+{
+    return QStringLiteral("deck");
 }
 
 Quiz::Quiz(bool showMastered, bool reviewOnly, QObject *parent)
@@ -74,7 +75,7 @@ bool Quiz::readCards(const QString& path)
 
 void Quiz::readDeck()
 {
-    QFile file(DeckPath);
+    QFile file(DeckPath());
     if (!file.open(QIODevice::ReadOnly|QIODevice::Text))
         return;
 
@@ -101,7 +102,7 @@ void Quiz::readDeck()
 
 void Quiz::writeDeck() const
 {
-    QFile file(DeckPath);
+    QFile file(DeckPath());
     if (!file.open(QIODevice::WriteOnly|QIODevice::Text))
         return;
 

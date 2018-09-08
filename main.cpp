@@ -9,8 +9,9 @@
 #include "quiz.h"
 #include "kanatextedit.h"
 
-namespace {
-const QString DefaultQuestionsPath("questions");
+static QString DefaultQuestionsPath()
+{
+    return QStringLiteral("questions");
 }
 
 int main(int argc, char *argv[])
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
     QCommandLineOption showMastered("m", "Show mastered cards.");
     parser.addOption(showMastered);
 
-    QCommandLineOption questionsPath("p", "Questions path.", "path", DefaultQuestionsPath);
+    QCommandLineOption questionsPath("p", "Questions path.", "path", DefaultQuestionsPath());
     parser.addOption(questionsPath);
 
     QCommandLineOption reviewOnly("r", "Only show cards marked for review.");
@@ -42,11 +43,7 @@ int main(int argc, char *argv[])
     if (!quiz.readCards(parser.value(questionsPath)))
         return -1;
 
-    QString cardSource;
-    if (parser.isSet(kanjiQuiz))
-        cardSource = QStringLiteral("kanji.qml");
-    else
-        cardSource = QStringLiteral("reading.qml");
+    const QString cardSource = parser.isSet(kanjiQuiz) ? QStringLiteral("kanji.qml") : QStringLiteral("reading.qml");
 
     QQuickView view;
     view.engine()->rootContext()->setContextProperty(QStringLiteral("quiz"), &quiz);
