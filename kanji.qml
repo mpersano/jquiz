@@ -24,7 +24,7 @@ Rectangle {
         Text {
             id: reading
             width: parent.width
-            text: quiz.card.reading
+            text: quiz.card.readings[0]
             font.pointSize: 30
             horizontalAlignment: Text.AlignHCenter
         }

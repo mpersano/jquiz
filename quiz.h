@@ -7,9 +7,10 @@ class Quiz : public QObject
     Q_OBJECT
     Q_PROPERTY(QVariantMap card READ card NOTIFY cardChanged)
     Q_PROPERTY(QString statusLine READ statusLine NOTIFY statusLineChanged)
+    Q_PROPERTY(bool katakanaInput READ katakanaInput CONSTANT)
 
 public:
-    Quiz(bool showMastered, bool reviewOnly, QObject *parent = nullptr);
+    Quiz(bool showMastered, bool reviewOnly, bool katakanaInput, QObject *parent = nullptr);
     ~Quiz();
 
     bool readCards(const QString& path);
@@ -22,6 +23,7 @@ public:
 
     QVariantMap card() const;
     QString statusLine() const;
+    bool katakanaInput() const;
 
 signals:
     void cardChanged();
@@ -38,7 +40,7 @@ private:
     struct Card
     {
         QString eigo;
-        QString reading;
+        QStringList readings;
         QString kanji;
         Deck deck;
     };
@@ -51,6 +53,7 @@ private:
 
     bool m_showMastered;
     bool m_reviewOnly;
+    bool m_katakanaInput;
     int m_viewedCards;
     QList<Card> m_cards;
     Card *m_curCard;

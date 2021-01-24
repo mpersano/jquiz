@@ -35,11 +35,14 @@ int main(int argc, char *argv[])
     QCommandLineOption kanjiQuiz("k", "Kanji quiz.");
     parser.addOption(kanjiQuiz);
 
+    QCommandLineOption katakanaInput("o", "Katakana input.");
+    parser.addOption(katakanaInput);
+
     parser.process(app);
 
     qsrand(QDateTime::currentDateTime().toTime_t());
 
-    Quiz quiz(parser.isSet(showMastered), parser.isSet(reviewOnly));
+    Quiz quiz(parser.isSet(showMastered), parser.isSet(reviewOnly), parser.isSet(katakanaInput));
     if (!quiz.readCards(parser.value(questionsPath)))
         return -1;
 

@@ -10,7 +10,7 @@ KanaTextEdit::KanaTextEdit(QQuickItem *parent)
 
 void KanaTextEdit::convertToKana(bool fullText)
 {
-    QString kanaText = romajiToKana(text(), fullText);
+    QString kanaText = romajiToKana(text(), fullText, m_katakanaInput);
 
     if (kanaText != text()) {
         const QSignalBlocker blocker(this);
@@ -28,4 +28,17 @@ void KanaTextEdit::keyPressEvent(QKeyEvent *event)
     }
 
     QQuickTextEdit::keyPressEvent(event);
+}
+
+bool KanaTextEdit::katakanaInput() const
+{
+    return m_katakanaInput;
+}
+
+void KanaTextEdit::setKatakanaInput(bool value)
+{
+    if (m_katakanaInput == value)
+        return;
+    m_katakanaInput = value;
+    emit katakanaInputChanged(value);
 }

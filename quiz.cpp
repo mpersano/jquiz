@@ -9,10 +9,11 @@ static QString DeckPath()
     return QStringLiteral("deck");
 }
 
-Quiz::Quiz(bool showMastered, bool reviewOnly, QObject *parent)
+Quiz::Quiz(bool showMastered, bool reviewOnly, bool katakanaInput, QObject *parent)
     : QObject(parent)
     , m_showMastered(showMastered)
     , m_reviewOnly(reviewOnly)
+    , m_katakanaInput(katakanaInput)
     , m_viewedCards(0)
     , m_curCard(nullptr)
 {
@@ -23,12 +24,17 @@ Quiz::~Quiz()
     writeDeck();
 }
 
+bool Quiz::katakanaInput() const
+{
+    return m_katakanaInput;
+}
+
 QVariantMap Quiz::card() const
 {
     QVariantMap data;
 
     data.insert("kanji", m_curCard->kanji);
-    data.insert("reading", m_curCard->reading);
+    data.insert("readings", m_curCard->readings);
     data.insert("eigo", m_curCard->eigo);
     data.insert("deck", [this]() -> QChar {
         switch (m_curCard->deck) {
@@ -54,10 +60,11 @@ bool Quiz::readCards(const QString& path)
 
     QTextStream stream(&file);
     while (!stream.atEnd()) {
-        QString line = stream.readLine();
-        QStringList parts = line.split(QChar('\t'));
+        const QString line = stream.readLine();
+        const QStringList parts = line.split(QChar('\t'));
         if (parts.size() == 3) {
-            m_cards.append({ parts[0], parts[1], parts[2], Deck::Normal });
+            const auto readings = parts[1].split(QLatin1Char('|'));
+            m_cards.append({ parts[0], readings, parts[2], Deck::Normal });
         }
     }
 

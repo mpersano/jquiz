@@ -152,7 +152,7 @@ void RomajiToKana::convert(wchar_t *text, bool fullText) const
 
 } // namespace
 
-QString romajiToKana(const QString& romajiText, bool fullText)
+QString romajiToKana(const QString& romajiText, bool fullText, bool katakanaInput)
 {
     static RomajiToKana converter;
 
@@ -161,7 +161,17 @@ QString romajiToKana(const QString& romajiText, bool fullText)
     romajiText.toWCharArray(&buffer[0]);
     buffer[romajiText.size()] = L'\0';
 
-    converter.convert(&buffer[0], fullText);
+    converter.convert(buffer.data(), fullText);
 
-    return QString::fromWCharArray(&buffer[0]);
+    if (katakanaInput) {
+        for (auto& ch : buffer) {
+            constexpr auto HiraganaStart = 0x3040;
+            constexpr auto HiraganaEnd = 0x309f;
+            constexpr auto KatakanaStart = 0x30a0;
+            if (ch >= HiraganaStart && ch <= HiraganaEnd)
+                ch += KatakanaStart - HiraganaStart;
+        }
+    }
+
+    return QString::fromWCharArray(buffer.data());
 }

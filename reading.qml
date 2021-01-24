@@ -39,12 +39,13 @@ Rectangle {
                 horizontalAlignment: Text.AlignHCenter
                 focus: true
                 visible: true
+                katakanaInput: quiz.katakanaInput
 
                 Keys.onPressed: {
                     if (event.key == Qt.Key_Return) {
                         reading.convertToKana(true);
 
-                        if (reading.text == quiz.card.reading) {
+                        if (quiz.card.readings.includes(reading.text)) {
                             reading.clear()
                             quiz.nextCard()
                         } else {
@@ -66,7 +67,7 @@ Rectangle {
             Text {
                 id: answer
                 width: card.width
-                text: quiz.card.reading
+                text: quiz.card.readings[0]
                 font.pointSize: 30
                 horizontalAlignment: Text.AlignHCenter
                 color: "red"
