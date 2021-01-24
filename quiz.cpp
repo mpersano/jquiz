@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QTextStream>
 #include <QFileInfo>
+#include <QRandomGenerator>
 
 #include "quiz.h"
 
@@ -139,7 +140,7 @@ void Quiz::nextCard()
 
     for (auto& card : m_cards) {
         if (m_curCard != &card && canShowCard(card)) {
-            if ((qrand() % index) == 0) {
+            if (QRandomGenerator::global()->bounded(0, index) == 0) {
                 nextCard = &card;
             }
             ++index;

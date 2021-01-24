@@ -40,8 +40,6 @@ int main(int argc, char *argv[])
 
     parser.process(app);
 
-    qsrand(QDateTime::currentDateTime().toTime_t());
-
     Quiz quiz(parser.isSet(showMastered), parser.isSet(reviewOnly), parser.isSet(katakanaInput));
     if (!quiz.readCards(parser.value(questionsPath)))
         return -1;
