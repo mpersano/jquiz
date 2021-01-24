@@ -57,5 +57,6 @@ private:
     int m_viewedCards;
     QList<Card> m_cards;
     Card *m_curCard;
+    QString m_deckPath;
 };
 

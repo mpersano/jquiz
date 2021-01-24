@@ -1,13 +1,9 @@
 #include <QFile>
 #include <QDebug>
 #include <QTextStream>
+#include <QFileInfo>
 
 #include "quiz.h"
-
-static QString DeckPath()
-{
-    return QStringLiteral("deck");
-}
 
 Quiz::Quiz(bool showMastered, bool reviewOnly, bool katakanaInput, QObject *parent)
     : QObject(parent)
@@ -68,6 +64,8 @@ bool Quiz::readCards(const QString& path)
         }
     }
 
+    m_deckPath = QStringLiteral("%1.deck").arg(QFileInfo(path).baseName());
+
     readDeck();
 
     if (m_cards.count() < 2) {
@@ -82,7 +80,7 @@ bool Quiz::readCards(const QString& path)
 
 void Quiz::readDeck()
 {
-    QFile file(DeckPath());
+    QFile file(m_deckPath);
     if (!file.open(QIODevice::ReadOnly|QIODevice::Text))
         return;
 
@@ -109,7 +107,7 @@ void Quiz::readDeck()
 
 void Quiz::writeDeck() const
 {
-    QFile file(DeckPath());
+    QFile file(m_deckPath);
     if (!file.open(QIODevice::WriteOnly|QIODevice::Text))
         return;
 
