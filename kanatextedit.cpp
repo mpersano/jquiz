@@ -5,7 +5,7 @@
 KanaTextEdit::KanaTextEdit(QQuickItem *parent)
     : QQuickTextEdit(parent)
 {
-    connect(this, &QQuickTextEdit::textChanged, [this] { convertToKana(false); });
+    connect(this, &QQuickTextEdit::textChanged, this, [this] { convertToKana(false); });
 }
 
 void KanaTextEdit::convertToKana(bool fullText)
