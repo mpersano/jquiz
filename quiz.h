@@ -55,7 +55,7 @@ private:
     bool m_reviewOnly;
     bool m_katakanaInput;
     int m_viewedCards;
-    QList<Card> m_cards;
+    QVector<Card> m_cards;
     Card *m_curCard;
     QString m_deckPath;
 };
