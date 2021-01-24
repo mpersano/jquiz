@@ -55,7 +55,7 @@ Rectangle {
     ]
 
     Keys.onPressed: {
-        if (event.key == Qt.Key_X) {
+        if (event.key == Qt.Key_Delete) {
             quiz.toggleCardMastered()
         } else if (event.key == Qt.Key_Space) {
             quiz.toggleCardReview()

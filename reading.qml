@@ -60,6 +60,9 @@ Rectangle {
                     } else if (event.key == Qt.Key_Tab) {
                         quiz.toggleReviewOnly();
                         event.accepted = true
+                    } else if (event.key == Qt.Key_Delete) {
+                        quiz.toggleCardMastered();
+                        event.accepted = true
                     }
                 }
             }

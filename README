@@ -6,6 +6,6 @@ Questions in the `mastered' deck will only be shown with the `-m' command-line o
 
 Some keys:
 
-  x: move question to the `mastered' deck.
+  delete: move question to the `mastered' deck.
   space: move question to the `review' deck.
   tab: practice mode (show only questions in the `review' deck)
