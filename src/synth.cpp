@@ -13,6 +13,34 @@
 #include <QDebug>
 
 #include <algorithm>
+#include <clocale>
+
+namespace {
+
+class LocaleSetter
+{
+public:
+    LocaleSetter(int category, const char *locale)
+        : m_category(category)
+        , m_oldLocale(std::setlocale(category, nullptr))
+    {
+        std::setlocale(category, locale);
+    }
+
+    ~LocaleSetter()
+    {
+        std::setlocale(m_category, m_oldLocale.c_str());
+    }
+
+    LocaleSetter(const LocaleSetter &) = delete;
+    LocaleSetter &operator=(const LocaleSetter &) = delete;
+
+private:
+    int m_category;
+    std::string m_oldLocale;
+};
+
+} // namespace
 
 Synth::Synth()
 {
@@ -37,11 +65,15 @@ bool Synth::loadDictionary(const char *dictionary)
 
 bool Synth::loadVoice(const char *voice)
 {
+    // hts_engine uses atof, set locale to "C"
+    LocaleSetter locale(LC_NUMERIC, "C");
+
     char *voices = const_cast<char *>(voice);
     if (HTS_Engine_load(&m_engine, &voices, 1) != TRUE) {
         return false;
     }
     qDebug() << "Loaded voice, label format:" << HTS_Engine_get_fullcontext_label_format(&m_engine);
+
     return true;
 }
 
