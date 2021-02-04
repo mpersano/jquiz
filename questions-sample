@@ -1,7 +1,9 @@
-sunday	にちようび	日曜日
-monday	げつようび	月曜日
-tuesday	かようび	火曜日
-wednesday	すいようび	水曜日
-thursday	もくようび	木曜日
-friday	きんようび	金曜日
-saturday	どようび	土曜日
+[
+    { "eigo": "sunday", "readings": [ "にちようび" ], "kanji": "日曜日" },
+    { "eigo": "monday", "readings": [ "げつようび" ], "kanji": "月曜日" },
+    { "eigo": "tuesday", "readings": [ "かようび" ], "kanji": "火曜日" },
+    { "eigo": "wednesday", "readings": [ "すいようび" ], "kanji": "水曜日" },
+    { "eigo": "thursday", "readings": [ "もくようび" ], "kanji": "木曜日" },
+    { "eigo": "friday", "readings": [ "きんようび" ], "kanji": "金曜日" },
+    { "eigo": "saturday", "readings": [ "どようび" ], "kanji": "土曜日" }
+]

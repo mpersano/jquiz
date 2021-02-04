@@ -3,6 +3,9 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QRandomGenerator>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include "quiz.h"
 
@@ -49,20 +52,32 @@ QVariantMap Quiz::card() const
 
 bool Quiz::readCards(const QString& path)
 {
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
+    QFile in(path);
+    if (!in.open(QIODevice::ReadOnly)) {
         qWarning() << "Failed to open" << path;
         return false;
     }
 
-    QTextStream stream(&file);
-    while (!stream.atEnd()) {
-        const QString line = stream.readLine();
-        const QStringList parts = line.split(QChar('\t'));
-        if (parts.size() == 3) {
-            const auto readings = parts[1].split(QLatin1Char('|'));
-            m_cards.append({ parts[0], readings, parts[2], Deck::Normal });
-        }
+    QJsonParseError error;
+    const auto cardsArray = QJsonDocument::fromJson(in.readAll(), &error).array();
+    if (error.error != QJsonParseError::NoError) {
+        qWarning() << "Failed to parse" << path;
+        return false;
+    }
+
+    m_cards.reserve(cardsArray.size());
+
+    for (const auto& cardValue : cardsArray) {
+        const auto& card = cardValue.toObject();
+        const auto eigo = card.value(QStringLiteral("eigo")).toString();
+        const auto readingsArray = card.value(QStringLiteral("readings")).toArray();
+        QStringList readings;
+        readings.reserve(readingsArray.size());
+        std::transform(readingsArray.begin(), readingsArray.end(), std::back_inserter(readings), [](const QJsonValue& value) {
+            return value.toString();
+        });
+        const auto kanji = card.value(QStringLiteral("kanji")).toString();
+        m_cards.append({ eigo, readings, kanji, Deck::Normal });
     }
 
     m_deckPath = QStringLiteral("%1.deck").arg(QFileInfo(path).baseName());
