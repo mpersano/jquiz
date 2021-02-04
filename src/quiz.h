@@ -1,6 +1,9 @@
 #pragma once
 
+#include <QBuffer>
 #include <QVariantMap>
+
+class SynthThread;
 
 class Quiz : public QObject
 {
@@ -20,6 +23,7 @@ public:
     Q_INVOKABLE void setCardReview();
     Q_INVOKABLE void toggleCardMastered();
     Q_INVOKABLE void toggleReviewOnly();
+    Q_INVOKABLE void sayReading();
 
     QVariantMap card() const;
     QString statusLine() const;
@@ -56,4 +60,6 @@ private:
     QVector<Card> m_cards;
     Card *m_curCard;
     QString m_deckPath;
+    SynthThread *m_synthThread;
+    QBuffer m_audioBuffer;
 };

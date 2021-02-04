@@ -1,0 +1,75 @@
+set(mecab_SOURCES
+    src/char_property.cpp
+    src/char_property.h
+    src/common.h
+    src/connector.cpp
+    src/connector.h
+    src/context_id.cpp
+    src/context_id.h
+    src/darts.h
+    src/dictionary_compiler.cpp
+    src/dictionary.cpp
+    src/dictionary_generator.cpp
+    src/dictionary.h
+    src/dictionary_rewriter.cpp
+    src/dictionary_rewriter.h
+    src/eval.cpp
+    src/feature_index.cpp
+    src/feature_index.h
+    src/freelist.h
+    src/iconv_utils.cpp
+    src/iconv_utils.h
+    src/lbfgs.cpp
+    src/lbfgs.h
+    src/learner.cpp
+    src/learner_node.h
+    src/learner_tagger.cpp
+    src/learner_tagger.h
+    src/libmecab.cpp
+    src/mecab.cpp
+    src/mecab-dict-index.cpp
+    src/mecab.h
+    src/mmap.h
+    src/nbest_generator.cpp
+    src/nbest_generator.h
+    src/param.cpp
+    src/param.h
+    src/scoped_ptr.h
+    src/stream_wrapper.h
+    src/string_buffer.cpp
+    src/string_buffer.h
+    src/tagger.cpp
+    src/thread.h
+    src/tokenizer.cpp
+    src/tokenizer.h
+    src/ucs.h
+    src/ucstable.h
+    src/utils.cpp
+    src/utils.h
+    src/viterbi.cpp
+    src/viterbi.h
+    src/winmain.h
+    src/writer.cpp
+    src/writer.h
+)
+
+set(mecab_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+add_library(mecab STATIC ${mecab_SOURCES})
+
+target_compile_definitions(mecab
+PRIVATE
+    HAVE_STDINT_H
+    HAVE_FCNTL_H
+    HAVE_SYS_STAT_H
+    HAVE_UNISTD_H
+    HAVE_DIRENT_H
+    DIC_VERSION=102
+    PACKAGE="open_jtalk"
+    VERSION="1.01"
+)
+
+target_include_directories(mecab
+PUBLIC
+    ${mecab_INCLUDE_DIR}
+)

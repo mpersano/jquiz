@@ -64,6 +64,7 @@ Rectangle {
         } else {
             if (card.state == "QUESTION") {
                 card.state = "ANSWER";
+                quiz.sayReading();
             } else {
                 card.state = "QUESTION"
                 quiz.nextCard()

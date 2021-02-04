@@ -1,3 +1,6 @@
+#include <QAudioDeviceInfo>
+#include <QAudioFormat>
+#include <QAudioOutput>
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
@@ -8,6 +11,7 @@
 #include <QTextStream>
 
 #include "quiz.h"
+#include "synththread.h"
 
 Quiz::Quiz(bool showMastered, bool reviewOnly, bool katakanaInput, QObject *parent)
     : QObject(parent)
@@ -16,7 +20,45 @@ Quiz::Quiz(bool showMastered, bool reviewOnly, bool katakanaInput, QObject *pare
     , m_katakanaInput(katakanaInput)
     , m_viewedCards(0)
     , m_curCard(nullptr)
+    , m_synthThread(new SynthThread(this))
 {
+    connect(m_synthThread, &SynthThread::synthesizedAudio, this, [this](const QByteArray &audioData) {
+        m_audioBuffer.setData(audioData);
+        m_audioBuffer.open(QIODevice::ReadOnly);
+
+        QAudioFormat format;
+        format.setSampleRate(m_synthThread->sampleRate());
+        format.setChannelCount(1);
+        format.setSampleSize(16);
+        format.setCodec("audio/pcm");
+        format.setByteOrder(QAudioFormat::LittleEndian);
+        format.setSampleType(QAudioFormat::SignedInt);
+
+        QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+        if (!info.isFormatSupported(format)) {
+            qWarning("Audio format not supported by backend?");
+            return;
+        }
+
+        auto *audioOutput = new QAudioOutput(format, this);
+        connect(audioOutput, &QAudioOutput::stateChanged, this, [this, audioOutput](QAudio::State newState) {
+            switch (newState) {
+            case QAudio::IdleState:
+                audioOutput->stop();
+                break;
+            case QAudio::StoppedState:
+                if (audioOutput->error() != QAudio::NoError) {
+                    qWarning() << "Error playing audio:" << audioOutput->error();
+                }
+                m_audioBuffer.close();
+                audioOutput->deleteLater();
+                break;
+            default:
+                break;
+            }
+        });
+        audioOutput->start(&m_audioBuffer);
+    });
 }
 
 Quiz::~Quiz()
@@ -222,4 +264,9 @@ int Quiz::countReviewCards() const
 {
     return std::count_if(std::begin(m_cards), std::end(m_cards),
                          [](const Card &c) { return c.deck == Deck::Review; });
+}
+
+void Quiz::sayReading()
+{
+    m_synthThread->synthesize(m_curCard->kanji);
 }

@@ -1,0 +1,71 @@
+set(openjtalk_SOURCES
+    njd/njd.c
+    njd/njd_node.c
+    njd/njd.h
+    njd_set_accent_phrase/njd_set_accent_phrase_rule_ascii_for_utf_8.h
+    njd_set_accent_phrase/njd_set_accent_phrase_rule_utf_8.h
+    njd_set_accent_phrase/njd_set_accent_phrase.c
+    njd_set_accent_phrase/njd_set_accent_phrase.h
+    njd_set_digit/njd_set_digit.h
+    njd_set_digit/njd_set_digit_rule_utf_8.h
+    njd_set_digit/njd_set_digit.c
+    njd_set_digit/njd_set_digit_rule_ascii_for_utf_8.h
+    njd_set_unvoiced_vowel/njd_set_unvoiced_vowel.h
+    njd_set_unvoiced_vowel/njd_set_unvoiced_vowel_rule_utf_8.h
+    njd_set_unvoiced_vowel/njd_set_unvoiced_vowel.c
+    njd_set_unvoiced_vowel/njd_set_unvoiced_vowel_rule_ascii_for_utf_8.h
+    njd_set_accent_type/njd_set_accent_type_rule_ascii_for_utf_8.h
+    njd_set_accent_type/njd_set_accent_type.h
+    njd_set_accent_type/njd_set_accent_type.c
+    njd_set_accent_type/njd_set_accent_type_rule_utf_8.h
+    mecab2njd/mecab2njd.h
+    mecab2njd/mecab2njd.c
+    njd_set_pronunciation/njd_set_pronunciation_rule_ascii_for_utf_8.h
+    njd_set_pronunciation/njd_set_pronunciation.c
+    njd_set_pronunciation/njd_set_pronunciation.h
+    njd_set_pronunciation/njd_set_pronunciation_rule_utf_8.h
+    njd_set_long_vowel/njd_set_long_vowel_rule_utf_8.h
+    njd_set_long_vowel/njd_set_long_vowel.h
+    njd_set_long_vowel/njd_set_long_vowel.c
+    njd_set_long_vowel/njd_set_long_vowel_rule_ascii_for_utf_8.h
+    text2mecab/text2mecab.h
+    text2mecab/text2mecab_rule_utf_8.h
+    text2mecab/text2mecab.c
+    text2mecab/text2mecab_rule_ascii_for_utf_8.h
+    jpcommon/jpcommon.c
+    jpcommon/jpcommon.h
+    jpcommon/jpcommon_label.c
+    jpcommon/jpcommon_node.c
+    jpcommon/jpcommon_rule_ascii_for_utf_8.h
+    jpcommon/jpcommon_rule_utf_8.h
+    njd2jpcommon/njd2jpcommon.c
+    njd2jpcommon/njd2jpcommon.h
+    njd2jpcommon/njd2jpcommon_rule_ascii_for_utf_8.h
+    njd2jpcommon/njd2jpcommon_rule_utf_8.h
+)
+
+set(openjtalk_INCLUDE_DIR
+    ${CMAKE_CURRENT_SOURCE_DIR}/mecab2njd
+    ${CMAKE_CURRENT_SOURCE_DIR}/njd
+    ${CMAKE_CURRENT_SOURCE_DIR}/njd_set_accent_phrase
+    ${CMAKE_CURRENT_SOURCE_DIR}/njd_set_accent_type
+    ${CMAKE_CURRENT_SOURCE_DIR}/njd_set_digit
+    ${CMAKE_CURRENT_SOURCE_DIR}/njd_set_long_vowel
+    ${CMAKE_CURRENT_SOURCE_DIR}/njd_set_pronunciation
+    ${CMAKE_CURRENT_SOURCE_DIR}/njd_set_unvoiced_vowel
+    ${CMAKE_CURRENT_SOURCE_DIR}/text2mecab
+    ${CMAKE_CURRENT_SOURCE_DIR}/jpcommon
+    ${CMAKE_CURRENT_SOURCE_DIR}/njd2jpcommon
+)
+
+add_library(openjtalk STATIC ${openjtalk_SOURCES})
+
+target_compile_definitions(openjtalk
+PRIVATE
+    CHARSET_UTF_8
+)
+
+target_include_directories(openjtalk
+PUBLIC
+    ${openjtalk_INCLUDE_DIR}
+)
