@@ -8,6 +8,7 @@ Rectangle {
     Loader {
         source: cardSource
         focus: true
+        anchors.fill: parent
     }
 
     Text {

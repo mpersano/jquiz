@@ -2,8 +2,7 @@ import QtQuick 2.3
 
 Rectangle {
     id: card
-    width: 480
-    height: 320
+    anchors.fill: parent
     focus: true
     state: "QUESTION"
 

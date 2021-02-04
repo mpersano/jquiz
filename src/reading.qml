@@ -3,8 +3,7 @@ import JQuiz 1.0
 
 Rectangle {
     id: card
-    width: 480
-    height: 320
+    anchors.fill: parent
     state: "QUESTION"
 
     Column {
