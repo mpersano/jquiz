@@ -13,7 +13,7 @@ public:
     Quiz(bool showMastered, bool reviewOnly, bool katakanaInput, QObject *parent = nullptr);
     ~Quiz();
 
-    bool readCards(const QString& path);
+    bool readCards(const QString &path);
 
     Q_INVOKABLE void nextCard();
     Q_INVOKABLE void toggleCardReview();
@@ -30,15 +30,13 @@ signals:
     void statusLineChanged();
 
 private:
-    enum class Deck
-    {
+    enum class Deck {
         Normal,
         Review,
         Mastered
     };
 
-    struct Card
-    {
+    struct Card {
         QString eigo;
         QStringList readings;
         QString kanji;
@@ -47,7 +45,7 @@ private:
 
     void readDeck();
     void writeDeck() const;
-    bool canShowCard(const Card& c) const;
+    bool canShowCard(const Card &c) const;
     int countVisibleCards() const;
     int countReviewCards() const;
 
@@ -59,4 +57,3 @@ private:
     Card *m_curCard;
     QString m_deckPath;
 };
-

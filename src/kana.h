@@ -2,4 +2,4 @@
 
 #include <QString>
 
-QString romajiToKana(const QString& romajiText, bool fullText, bool katakanaInput);
+QString romajiToKana(const QString &romajiText, bool fullText, bool katakanaInput);

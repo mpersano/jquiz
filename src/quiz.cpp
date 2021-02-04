@@ -1,11 +1,11 @@
-#include <QFile>
 #include <QDebug>
-#include <QTextStream>
+#include <QFile>
 #include <QFileInfo>
-#include <QRandomGenerator>
-#include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QJsonObject>
+#include <QRandomGenerator>
+#include <QTextStream>
 
 #include "quiz.h"
 
@@ -50,7 +50,7 @@ QVariantMap Quiz::card() const
     return data;
 }
 
-bool Quiz::readCards(const QString& path)
+bool Quiz::readCards(const QString &path)
 {
     QFile in(path);
     if (!in.open(QIODevice::ReadOnly)) {
@@ -67,13 +67,13 @@ bool Quiz::readCards(const QString& path)
 
     m_cards.reserve(cardsArray.size());
 
-    for (const auto& cardValue : cardsArray) {
-        const auto& card = cardValue.toObject();
+    for (const auto &cardValue : cardsArray) {
+        const auto &card = cardValue.toObject();
         const auto eigo = card.value(QStringLiteral("eigo")).toString();
         const auto readingsArray = card.value(QStringLiteral("readings")).toArray();
         QStringList readings;
         readings.reserve(readingsArray.size());
-        std::transform(readingsArray.begin(), readingsArray.end(), std::back_inserter(readings), [](const QJsonValue& value) {
+        std::transform(readingsArray.begin(), readingsArray.end(), std::back_inserter(readings), [](const QJsonValue &value) {
             return value.toString();
         });
         const auto kanji = card.value(QStringLiteral("kanji")).toString();
@@ -97,7 +97,7 @@ bool Quiz::readCards(const QString& path)
 void Quiz::readDeck()
 {
     QFile file(m_deckPath);
-    if (!file.open(QIODevice::ReadOnly|QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
 
     QTextStream stream(&file);
@@ -105,11 +105,11 @@ void Quiz::readDeck()
         QString line = stream.readLine();
         QStringList parts = line.split(QChar(':'));
         if (parts.size() == 2) {
-            const auto& kanji = parts[0];
-            const auto& deck = parts[1];
+            const auto &kanji = parts[0];
+            const auto &deck = parts[1];
 
             auto it = std::find_if(std::begin(m_cards), std::end(m_cards),
-                                   [&](const Card& c) { return c.kanji == kanji; });
+                                   [&](const Card &c) { return c.kanji == kanji; });
 
             if (it != std::end(m_cards)) {
                 if (deck == QLatin1String("R"))
@@ -124,12 +124,12 @@ void Quiz::readDeck()
 void Quiz::writeDeck() const
 {
     QFile file(m_deckPath);
-    if (!file.open(QIODevice::WriteOnly|QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
 
     QTextStream stream(&file);
 
-    for (const auto& card : qAsConst(m_cards)) {
+    for (const auto &card : qAsConst(m_cards)) {
         if (card.deck != Deck::Normal) {
             stream << card.kanji << QChar(':')
                    << (card.deck == Deck::Review ? QChar('R') : QChar('M')) << QChar('\n');
@@ -137,7 +137,7 @@ void Quiz::writeDeck() const
     }
 }
 
-bool Quiz::canShowCard(const Card& c) const
+bool Quiz::canShowCard(const Card &c) const
 {
     if (m_reviewOnly)
         return c.deck == Deck::Review;
@@ -153,7 +153,7 @@ void Quiz::nextCard()
 
     int index = 1;
 
-    for (auto& card : m_cards) {
+    for (auto &card : m_cards) {
         if (m_curCard != &card && canShowCard(card)) {
             if (QRandomGenerator::global()->bounded(0, index) == 0) {
                 nextCard = &card;
@@ -207,9 +207,9 @@ void Quiz::toggleReviewOnly()
 QString Quiz::statusLine() const
 {
     return QStringLiteral("%1 [/%2 ?=%3])")
-        .arg(m_viewedCards)
-        .arg(countVisibleCards())
-        .arg(countReviewCards());
+            .arg(m_viewedCards)
+            .arg(countVisibleCards())
+            .arg(countReviewCards());
 }
 
 int Quiz::countVisibleCards() const
@@ -221,6 +221,5 @@ int Quiz::countVisibleCards() const
 int Quiz::countReviewCards() const
 {
     return std::count_if(std::begin(m_cards), std::end(m_cards),
-                         [](const Card& c) { return c.deck == Deck::Review; });
+                         [](const Card &c) { return c.deck == Deck::Review; });
 }
-

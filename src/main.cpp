@@ -1,13 +1,13 @@
-#include <QGuiApplication>
-#include <QQmlEngine>
-#include <QQmlFileSelector>
-#include <QQmlContext>
-#include <QQuickView>
 #include <QCommandLineParser>
 #include <QDateTime>
+#include <QGuiApplication>
+#include <QQmlContext>
+#include <QQmlEngine>
+#include <QQmlFileSelector>
+#include <QQuickView>
 
-#include "quiz.h"
 #include "kanatextedit.h"
+#include "quiz.h"
 
 static QString DefaultQuestionsPath()
 {

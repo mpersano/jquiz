@@ -1,10 +1,10 @@
 #include "kana.h"
 
-#include <vector>
+#include <cassert>
 #include <cstring>
 #include <cwchar>
-#include <cassert>
 #include <tuple>
+#include <vector>
 
 namespace {
 
@@ -21,9 +21,8 @@ private:
 
     std::pair<const wchar_t *, int> convertToSingleKana(const wchar_t *text) const;
 
-    struct TrieNode
-    {
-        TrieNode *children['z' - 'a' + 1] = {0};
+    struct TrieNode {
+        TrieNode *children['z' - 'a' + 1] = { 0 };
         const wchar_t *kana = nullptr;
     };
 
@@ -63,8 +62,8 @@ void RomajiToKana::initialize()
     static const struct {
         const char *romaji;
         const wchar_t *kana;
-    } romajiToKana[]
-    {
+    } romajiToKana[] {
+        // clang-format off
         {  "a", L"あ" }, {  "i", L"い" }, {  "u", L"う" }, {  "e", L"え" }, {  "o", L"お" },
         { "ka", L"か" }, { "ki", L"き" }, { "ku", L"く" }, { "ke", L"け" }, { "ko", L"こ" },
         { "sa", L"さ" }, { "si", L"し" }, { "su", L"す" }, { "se", L"せ" }, { "so", L"そ" },
@@ -94,9 +93,10 @@ void RomajiToKana::initialize()
         { "bya", L"びゃ" }, { "byu", L"びゅ" }, { "byo", L"びょ" },
         { "pya", L"ぴゃ" }, { "pyu", L"ぴゅ" }, { "pyo", L"ぴょ" },
         {  "nn", L"ん" },
+        // clang-format on
     };
 
-    for (const auto& p : romajiToKana)
+    for (const auto &p : romajiToKana)
         trieInsert(p.romaji, p.kana);
 }
 
@@ -109,7 +109,7 @@ std::pair<const wchar_t *, int> RomajiToKana::convertToSingleKana(const wchar_t 
 
         for (const wchar_t *p = text; *p; p++) {
             if (*p < L'a' || *p > L'z' ||
-              (curNode = curNode->children[static_cast<int>(*p) - L'a']) == nullptr)
+                (curNode = curNode->children[static_cast<int>(*p) - L'a']) == nullptr)
                 break;
 
             if (curNode->kana)
@@ -152,7 +152,7 @@ void RomajiToKana::convert(wchar_t *text, bool fullText) const
 
 } // namespace
 
-QString romajiToKana(const QString& romajiText, bool fullText, bool katakanaInput)
+QString romajiToKana(const QString &romajiText, bool fullText, bool katakanaInput)
 {
     static RomajiToKana converter;
 
@@ -164,7 +164,7 @@ QString romajiToKana(const QString& romajiText, bool fullText, bool katakanaInpu
     converter.convert(buffer.data(), fullText);
 
     if (katakanaInput) {
-        for (auto& ch : buffer) {
+        for (auto &ch : buffer) {
             constexpr auto HiraganaStart = 0x3040;
             constexpr auto HiraganaEnd = 0x309f;
             constexpr auto KatakanaStart = 0x30a0;
