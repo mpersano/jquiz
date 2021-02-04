@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    qmlRegisterType<Quiz>("JQuiz", 1, 0, "Quiz");
     qmlRegisterType<KanaTextEdit>("JQuiz", 1, 0, "KanaTextEdit");
 
     QCommandLineParser parser;
@@ -40,7 +41,10 @@ int main(int argc, char *argv[])
 
     parser.process(app);
 
-    Quiz quiz(parser.isSet(showMastered), parser.isSet(reviewOnly), parser.isSet(katakanaInput));
+    Quiz quiz;
+    quiz.setShowMastered(parser.isSet(showMastered));
+    quiz.setReviewOnly(parser.isSet(reviewOnly));
+    quiz.setKatakanaInput(parser.isSet(katakanaInput));
     if (!quiz.readCards(parser.value(questionsPath)))
         return -1;
 

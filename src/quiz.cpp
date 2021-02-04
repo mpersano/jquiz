@@ -13,13 +13,8 @@
 #include "quiz.h"
 #include "synththread.h"
 
-Quiz::Quiz(bool showMastered, bool reviewOnly, bool katakanaInput, QObject *parent)
+Quiz::Quiz(QObject *parent)
     : QObject(parent)
-    , m_showMastered(showMastered)
-    , m_reviewOnly(reviewOnly)
-    , m_katakanaInput(katakanaInput)
-    , m_viewedCards(0)
-    , m_curCard(nullptr)
     , m_synthThread(new SynthThread(this))
 {
     connect(m_synthThread, &SynthThread::synthesizedAudio, this, [this](const QByteArray &audioData) {
@@ -52,18 +47,41 @@ Quiz::Quiz(bool showMastered, bool reviewOnly, bool katakanaInput, QObject *pare
                 }
                 m_audioBuffer.close();
                 audioOutput->deleteLater();
+                m_synthState = SynthState::Idle;
+                emit synthStateChanged();
                 break;
             default:
                 break;
             }
         });
         audioOutput->start(&m_audioBuffer);
+        m_synthState = SynthState::Playing;
+        emit synthStateChanged();
     });
 }
 
 Quiz::~Quiz()
 {
     writeDeck();
+}
+
+void Quiz::setShowMastered(bool showMastered)
+{
+    m_showMastered = showMastered;
+}
+
+void Quiz::setReviewOnly(bool reviewOnly)
+{
+    m_reviewOnly = reviewOnly;
+}
+
+void Quiz::setKatakanaInput(bool katakanaInput)
+{
+    if (katakanaInput == m_katakanaInput) {
+        return;
+    }
+    m_katakanaInput = katakanaInput;
+    emit katakanaInputChanged(katakanaInput);
 }
 
 bool Quiz::katakanaInput() const
@@ -92,6 +110,15 @@ QVariantMap Quiz::card() const
     return data;
 }
 
+QVariantMap Quiz::example() const
+{
+    QVariantMap data;
+    data.insert("isValid", m_curExample != nullptr);
+    data.insert("en", m_curExample ? m_curExample->eigo : "");
+    data.insert("jp", m_curExample ? m_curExample->nihongo : "");
+    return data;
+}
+
 bool Quiz::readCards(const QString &path)
 {
     QFile in(path);
@@ -110,7 +137,7 @@ bool Quiz::readCards(const QString &path)
     m_cards.reserve(cardsArray.size());
 
     for (const auto &cardValue : cardsArray) {
-        const auto &card = cardValue.toObject();
+        const auto card = cardValue.toObject();
         const auto eigo = card.value(QStringLiteral("eigo")).toString();
         const auto readingsArray = card.value(QStringLiteral("readings")).toArray();
         QStringList readings;
@@ -119,7 +146,19 @@ bool Quiz::readCards(const QString &path)
             return value.toString();
         });
         const auto kanji = card.value(QStringLiteral("kanji")).toString();
-        m_cards.append({ eigo, readings, kanji, Deck::Normal });
+        QVector<Example> examples;
+        const auto examplesValue = card.value(QStringLiteral("examples"));
+        if (!examplesValue.isUndefined()) {
+            const auto examplesArray = examplesValue.toArray();
+            examples.reserve(examplesArray.size());
+            std::transform(examplesArray.begin(), examplesArray.end(), std::back_inserter(examples), [](const QJsonValue &exampleValue) {
+                const auto example = exampleValue.toObject();
+                const auto nihongo = example.value(QStringLiteral("jp")).toString();
+                const auto eigo = example.value(QStringLiteral("en")).toString();
+                return Example { eigo, nihongo };
+            });
+        }
+        m_cards.append({ eigo, readings, kanji, examples, Deck::Normal });
     }
 
     m_deckPath = QStringLiteral("%1.deck").arg(QFileInfo(path).baseName());
@@ -191,13 +230,15 @@ bool Quiz::canShowCard(const Card &c) const
 
 void Quiz::nextCard()
 {
+    auto *randomGenerator = QRandomGenerator::global();
+
     Card *nextCard = nullptr;
 
     int index = 1;
 
     for (auto &card : m_cards) {
         if (m_curCard != &card && canShowCard(card)) {
-            if (QRandomGenerator::global()->bounded(0, index) == 0) {
+            if (randomGenerator->bounded(0, index) == 0) {
                 nextCard = &card;
             }
             ++index;
@@ -208,8 +249,18 @@ void Quiz::nextCard()
 
     m_curCard = nextCard;
 
+    m_curExample = [this, randomGenerator]() -> const Example * {
+        const auto &examples = m_curCard->examples;
+        if (examples.empty()) {
+            return nullptr;
+        }
+        const auto index = randomGenerator->bounded(0, examples.size());
+        return &examples[index];
+    }();
+
     ++m_viewedCards;
     emit cardChanged();
+    emit exampleChanged();
     emit statusLineChanged();
 }
 
@@ -266,7 +317,16 @@ int Quiz::countReviewCards() const
                          [](const Card &c) { return c.deck == Deck::Review; });
 }
 
-void Quiz::sayReading()
+void Quiz::sayExample()
 {
-    m_synthThread->synthesize(m_curCard->kanji);
+    if (m_curExample && m_synthState == SynthState::Idle) {
+        m_synthThread->synthesize(m_curExample->nihongo);
+        m_synthState = SynthState::Loading;
+        emit synthStateChanged();
+    }
+}
+
+Quiz::SynthState Quiz::synthState() const
+{
+    return m_synthState;
 }

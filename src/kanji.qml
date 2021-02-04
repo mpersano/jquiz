@@ -6,32 +6,14 @@ Rectangle {
     focus: true
     state: "QUESTION"
 
-    Column {
+    Answer {
         id: kanjiReading
-        width: parent.width
         anchors.centerIn: parent
-        visible: false
-
-        Text {
-            id: kanji
-            width: parent.width
-            text: quiz.card.kanji
-            font.pointSize: 60
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Text {
-            id: reading
-            width: parent.width
-            text: quiz.card.readings[0]
-            font.pointSize: 30
-            horizontalAlignment: Text.AlignHCenter
-        }
+        width: parent.width
     }
 
     Text {
         id: eigo
-        visible: true
         anchors.fill: parent
         text: quiz.card.eigo
         font.pointSize: 30
@@ -63,7 +45,6 @@ Rectangle {
         } else {
             if (card.state == "QUESTION") {
                 card.state = "ANSWER";
-                quiz.sayReading();
             } else {
                 card.state = "QUESTION"
                 quiz.nextCard()

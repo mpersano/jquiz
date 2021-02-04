@@ -3,5 +3,10 @@
         <file>jquiz.qml</file>
         <file>kanji.qml</file>
         <file>reading.qml</file>
+        <file>Answer.qml</file>
+        <file>SpeechButton.qml</file>
+        <file>play.png</file>
+        <file>spinner.png</file>
+        <file>stop.png</file>
     </qresource>
 </RCC>

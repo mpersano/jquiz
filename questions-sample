@@ -1,9 +1,26 @@
 [
-    { "eigo": "sunday", "readings": [ "にちようび" ], "kanji": "日曜日" },
-    { "eigo": "monday", "readings": [ "げつようび" ], "kanji": "月曜日" },
-    { "eigo": "tuesday", "readings": [ "かようび" ], "kanji": "火曜日" },
-    { "eigo": "wednesday", "readings": [ "すいようび" ], "kanji": "水曜日" },
-    { "eigo": "thursday", "readings": [ "もくようび" ], "kanji": "木曜日" },
-    { "eigo": "friday", "readings": [ "きんようび" ], "kanji": "金曜日" },
-    { "eigo": "saturday", "readings": [ "どようび" ], "kanji": "土曜日" }
+    {
+        "eigo": "gratitude",
+        "readings": [ "おれい" ],
+        "kanji": "お礼",
+        "examples": [
+            { "jp": "お礼の言葉もありません。", "en": "I have no words to thank you." }
+        ]
+    },
+    {
+        "eigo": "to run",
+        "readings": [ "はしる" ],
+        "kanji": "走る",
+        "examples": [
+            {
+                "jp": "５分と走らないうちに息切れしてしまった。",
+                "en": "I had not run five minutes when I got out of breath."
+            }
+        ]
+    },
+    {
+        "eigo": "to see",
+        "readings": [ "みる" ],
+        "kanji": "見る"
+    }
 ]
