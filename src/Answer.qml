@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import JQuiz 1.0
 
 Column {
     visible: false
@@ -51,6 +52,7 @@ Column {
             width: 60
             height: 60
             anchors.verticalCenter: parent.verticalCenter
+            visible: quiz.synthState != Quiz.Error
         }
     }
 }

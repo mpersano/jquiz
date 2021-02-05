@@ -16,6 +16,7 @@
 Quiz::Quiz(QObject *parent)
     : QObject(parent)
     , m_synthThread(new SynthThread(this))
+    , m_synthState(m_synthThread->initialized() ? SynthState::Idle : SynthState::Error)
 {
     connect(m_synthThread, &SynthThread::synthesizedAudio, this, [this](const QByteArray &audioData) {
         m_audioBuffer.setData(audioData);

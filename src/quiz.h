@@ -21,7 +21,8 @@ public:
     enum class SynthState {
         Idle,
         Loading,
-        Playing
+        Playing,
+        Error
     };
     Q_ENUM(SynthState)
 
@@ -87,5 +88,5 @@ private:
     QString m_deckPath;
     SynthThread *m_synthThread;
     QBuffer m_audioBuffer;
-    SynthState m_synthState = SynthState::Idle;
+    SynthState m_synthState;
 };

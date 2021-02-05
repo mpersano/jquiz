@@ -14,6 +14,7 @@ public:
     explicit SynthThread(QObject *parent = nullptr);
     ~SynthThread();
 
+    bool initialized() const;
     int sampleRate() const;
     void synthesize(const QString &text);
 

@@ -14,6 +14,11 @@ SynthThread::SynthThread(QObject *parent)
     initializeSynth();
 }
 
+bool SynthThread::initialized() const
+{
+    return m_initialized;
+}
+
 SynthThread::~SynthThread()
 {
     m_mutex.lock();
@@ -30,6 +35,8 @@ int SynthThread::sampleRate() const
 
 void SynthThread::synthesize(const QString &text)
 {
+    if (!m_initialized)
+        return;
     QMutexLocker locker(&m_mutex);
     m_text = text;
     if (!isRunning()) {
@@ -75,6 +82,7 @@ void SynthThread::initializeSynth()
 
     if (!m_synth.loadVoice(VoicePath)) {
         qWarning("Failed to read voice file %s", VoicePath);
+        return;
     }
 
     m_synth.setSamplingFrequency(SampleRate);
