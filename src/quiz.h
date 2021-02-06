@@ -30,6 +30,7 @@ public:
         None = 0,
         ShowMastered = 1 << 0,
         ReviewOnly = 1 << 1,
+        ExamplesOnly = 1 << 2,
     };
     Q_ENUM(CardFilter)
     Q_DECLARE_FLAGS(CardFilters, CardFilter)

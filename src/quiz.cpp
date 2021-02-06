@@ -216,11 +216,18 @@ void Quiz::writeDeck() const
 
 bool Quiz::canShowCard(const Card &c) const
 {
-    if (m_cardFilters.testFlag(CardFilter::ReviewOnly))
-        return c.deck == Deck::Review;
+    if (m_cardFilters.testFlag(CardFilter::ExamplesOnly)) {
+        if (c.examples.empty())
+            return false;
+    }
 
-    if (!m_cardFilters.testFlag(CardFilter::ShowMastered))
+    if (m_cardFilters.testFlag(CardFilter::ReviewOnly)) {
+        return c.deck == Deck::Review;
+    }
+
+    if (!m_cardFilters.testFlag(CardFilter::ShowMastered)) {
         return c.deck != Deck::Mastered;
+    }
 
     return true;
 }

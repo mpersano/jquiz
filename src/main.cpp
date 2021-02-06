@@ -33,6 +33,9 @@ int main(int argc, char *argv[])
     QCommandLineOption reviewOnly("r", "Only show cards marked for review.");
     parser.addOption(reviewOnly);
 
+    QCommandLineOption examplesOnly("e", "Only show cards with examples.");
+    parser.addOption(examplesOnly);
+
     QCommandLineOption kanjiQuiz("k", "Kanji quiz.");
     parser.addOption(kanjiQuiz);
 
@@ -46,6 +49,8 @@ int main(int argc, char *argv[])
         cardFilters.setFlag(Quiz::CardFilter::ShowMastered);
     if (parser.isSet(reviewOnly))
         cardFilters.setFlag(Quiz::CardFilter::ReviewOnly);
+    if (parser.isSet(examplesOnly))
+        cardFilters.setFlag(Quiz::CardFilter::ExamplesOnly);
 
     Quiz quiz;
     quiz.setCardFilters(cardFilters);
