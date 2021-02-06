@@ -26,8 +26,15 @@ public:
     };
     Q_ENUM(SynthState)
 
-    void setShowMastered(bool showMastered);
-    void setReviewOnly(bool reviewOnly);
+    enum class CardFilter {
+        None = 0,
+        ShowMastered = 1 << 0,
+        ReviewOnly = 1 << 1,
+    };
+    Q_ENUM(CardFilter)
+    Q_DECLARE_FLAGS(CardFilters, CardFilter)
+
+    void setCardFilters(CardFilters cardFilters);
     void setKatakanaInput(bool katakanaInput);
 
     bool readCards(const QString &path);
@@ -78,8 +85,7 @@ private:
     int countVisibleCards() const;
     int countReviewCards() const;
 
-    bool m_showMastered = false;
-    bool m_reviewOnly = false;
+    CardFilters m_cardFilters = CardFilter::None;
     bool m_katakanaInput = false;
     int m_viewedCards = 0;
     QVector<Card> m_cards;
@@ -90,3 +96,5 @@ private:
     QBuffer m_audioBuffer;
     SynthState m_synthState;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Quiz::CardFilters)

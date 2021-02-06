@@ -66,14 +66,9 @@ Quiz::~Quiz()
     writeDeck();
 }
 
-void Quiz::setShowMastered(bool showMastered)
+void Quiz::setCardFilters(CardFilters cardFilters)
 {
-    m_showMastered = showMastered;
-}
-
-void Quiz::setReviewOnly(bool reviewOnly)
-{
-    m_reviewOnly = reviewOnly;
+    m_cardFilters = cardFilters;
 }
 
 void Quiz::setKatakanaInput(bool katakanaInput)
@@ -221,12 +216,13 @@ void Quiz::writeDeck() const
 
 bool Quiz::canShowCard(const Card &c) const
 {
-    if (m_reviewOnly)
+    if (m_cardFilters.testFlag(CardFilter::ReviewOnly))
         return c.deck == Deck::Review;
-    else if (!m_showMastered)
+
+    if (!m_cardFilters.testFlag(CardFilter::ShowMastered))
         return c.deck != Deck::Mastered;
-    else
-        return true;
+
+    return true;
 }
 
 void Quiz::nextCard()
@@ -294,7 +290,7 @@ void Quiz::toggleCardMastered()
 
 void Quiz::toggleReviewOnly()
 {
-    m_reviewOnly = !m_reviewOnly;
+    m_cardFilters ^= CardFilter::ReviewOnly;
     emit statusLineChanged();
 }
 

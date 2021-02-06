@@ -41,9 +41,14 @@ int main(int argc, char *argv[])
 
     parser.process(app);
 
+    Quiz::CardFilters cardFilters = Quiz::CardFilter::None;
+    if (parser.isSet(showMastered))
+        cardFilters.setFlag(Quiz::CardFilter::ShowMastered);
+    if (parser.isSet(reviewOnly))
+        cardFilters.setFlag(Quiz::CardFilter::ReviewOnly);
+
     Quiz quiz;
-    quiz.setShowMastered(parser.isSet(showMastered));
-    quiz.setReviewOnly(parser.isSet(reviewOnly));
+    quiz.setCardFilters(cardFilters);
     quiz.setKatakanaInput(parser.isSet(katakanaInput));
     if (!quiz.readCards(parser.value(questionsPath)))
         return -1;
