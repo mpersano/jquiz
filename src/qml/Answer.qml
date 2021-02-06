@@ -49,8 +49,8 @@ Column {
         }
 
         SpeechButton {
-            width: 60
-            height: 60
+            width: 40
+            height: 40
             anchors.verticalCenter: parent.verticalCenter
             visible: quiz.synthState != Quiz.Error
         }

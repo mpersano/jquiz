@@ -1,0 +1,7 @@
+<RCC>
+    <qresource>
+        <file>play.png</file>
+        <file>spinner.png</file>
+        <file>stop.png</file>
+    </qresource>
+</RCC>

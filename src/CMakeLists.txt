@@ -19,7 +19,8 @@ set(jquiz_SOURCES
 )
 
 set(jquiz_RCS
-    jquiz.qrc
+    qml/qml.qrc
+    assets/assets.qrc
 )
 
 add_executable(jquiz ${jquiz_SOURCES} ${jquiz_RCS})
