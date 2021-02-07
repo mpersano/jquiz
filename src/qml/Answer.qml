@@ -5,6 +5,14 @@ Column {
     visible: false
 
     Text {
+        id: eigo
+        width: parent.width
+        text: quiz.card.eigo
+        font.pointSize: 20
+        horizontalAlignment: Text.AlignHCenter
+    }
+
+    Text {
         id: kanji
         width: parent.width
         text: quiz.card.kanji
@@ -15,7 +23,7 @@ Column {
     Text {
         id: reading
         width: parent.width
-        text: "[" + quiz.card.readings[0] + "] "
+        text: quiz.card.readings[0]
         font.pointSize: 20
         horizontalAlignment: Text.AlignHCenter
     }
@@ -28,7 +36,7 @@ Column {
         visible: quiz.example.isValid
 
         Column {
-            width: 380
+            width: 500
             Text {
                 id: sampleNihongo
                 width: parent.width

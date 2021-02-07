@@ -1,8 +1,8 @@
 import QtQuick 2.3
 
 Rectangle {
-    width: 480
-    height: 320
+    width: 600
+    height: 400
     color: "white"
 
     Loader {
