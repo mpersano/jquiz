@@ -318,7 +318,7 @@ int Quiz::countVisibleCards() const
 int Quiz::countReviewCards() const
 {
     return std::count_if(std::begin(m_cards), std::end(m_cards),
-                         [](const Card &c) { return c.deck == Deck::Review; });
+                         [this](const Card &c) { return c.deck == Deck::Review && canShowCard(c); });
 }
 
 void Quiz::sayExample()
