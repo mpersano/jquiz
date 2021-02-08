@@ -1,6 +1,6 @@
 # jquiz
 
-Simple Japanese flash cards (mainly for my personal use).
+Simple Japanese flash cards, mainly for my personal use.
 
 Uses [Open JTalk](http://open-jtalk.sourceforge.net/) for speech synthesis.
 
@@ -18,10 +18,11 @@ There are two modes:
   answer.
 
 Cards can be in one of three decks: *normal*, *review* and *mastered*. Questions
-in the *mastered* deck will only be shown with the `-m` command-line option.
+in the mastered deck are only shown if the program is started with the with the
+`-m` command-line option.
 
 To move cards between decks, use the following keys:
 
-* Delete: move question to the *mastered* deck.
-* Space: move question to the *review* deck.
-* Tab: switch to review mode (show only questions in the *review* deck)
+* Delete: move card into or out of the mastered deck.
+* Space: move card to the review deck.
+* Tab: toggle review mode (only show cards in the review deck)
