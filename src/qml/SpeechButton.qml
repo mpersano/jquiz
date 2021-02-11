@@ -47,7 +47,7 @@ Item {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: console.log("TODO: stop speech")
+            onClicked: quiz.stopSynth()
         }
     }
 

@@ -3,6 +3,7 @@
 #include <QBuffer>
 #include <QVariantMap>
 
+class QAudioOutput;
 class SynthThread;
 
 class Quiz : public QObject
@@ -46,6 +47,7 @@ public:
     Q_INVOKABLE void toggleCardMastered();
     Q_INVOKABLE void toggleReviewOnly();
     Q_INVOKABLE void sayExample();
+    Q_INVOKABLE void stopSynth();
 
     QVariantMap card() const;
     QVariantMap example() const;
@@ -85,6 +87,7 @@ private:
     bool canShowCard(const Card &c) const;
     int countVisibleCards() const;
     int countReviewCards() const;
+    bool initializeAudio();
 
     CardFilters m_cardFilters = CardFilter::None;
     bool m_katakanaInput = false;
@@ -95,6 +98,7 @@ private:
     QString m_deckPath;
     SynthThread *m_synthThread;
     QBuffer m_audioBuffer;
+    QAudioOutput *m_audioOutput = nullptr;
     SynthState m_synthState;
 };
 

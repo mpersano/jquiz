@@ -16,46 +16,13 @@
 Quiz::Quiz(QObject *parent)
     : QObject(parent)
     , m_synthThread(new SynthThread(this))
-    , m_synthState(m_synthThread->initialized() ? SynthState::Idle : SynthState::Error)
+    , m_synthState(m_synthThread->initialized() && initializeAudio() ? SynthState::Idle : SynthState::Error)
 {
     connect(m_synthThread, &SynthThread::synthesizedAudio, this, [this](const QByteArray &audioData) {
+        Q_ASSERT(m_audioOutput);
         m_audioBuffer.setData(audioData);
         m_audioBuffer.open(QIODevice::ReadOnly);
-
-        QAudioFormat format;
-        format.setSampleRate(m_synthThread->sampleRate());
-        format.setChannelCount(1);
-        format.setSampleSize(16);
-        format.setCodec("audio/pcm");
-        format.setByteOrder(QAudioFormat::LittleEndian);
-        format.setSampleType(QAudioFormat::SignedInt);
-
-        QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-        if (!info.isFormatSupported(format)) {
-            qWarning("Audio format not supported by backend?");
-            return;
-        }
-
-        auto *audioOutput = new QAudioOutput(format, this);
-        connect(audioOutput, &QAudioOutput::stateChanged, this, [this, audioOutput](QAudio::State newState) {
-            switch (newState) {
-            case QAudio::IdleState:
-                audioOutput->stop();
-                break;
-            case QAudio::StoppedState:
-                if (audioOutput->error() != QAudio::NoError) {
-                    qWarning() << "Error playing audio:" << audioOutput->error();
-                }
-                m_audioBuffer.close();
-                audioOutput->deleteLater();
-                m_synthState = SynthState::Idle;
-                emit synthStateChanged();
-                break;
-            default:
-                break;
-            }
-        });
-        audioOutput->start(&m_audioBuffer);
+        m_audioOutput->start(&m_audioBuffer);
         m_synthState = SynthState::Playing;
         emit synthStateChanged();
     });
@@ -234,6 +201,8 @@ bool Quiz::canShowCard(const Card &c) const
 
 void Quiz::nextCard()
 {
+    stopSynth();
+
     auto *randomGenerator = QRandomGenerator::global();
 
     Card *nextCard = nullptr;
@@ -330,7 +299,52 @@ void Quiz::sayExample()
     }
 }
 
+void Quiz::stopSynth()
+{
+    if (m_synthState == SynthState::Playing) {
+        Q_ASSERT(m_audioOutput);
+        m_audioOutput->stop();
+    }
+}
+
 Quiz::SynthState Quiz::synthState() const
 {
     return m_synthState;
+}
+
+bool Quiz::initializeAudio()
+{
+    QAudioFormat format;
+    format.setSampleRate(m_synthThread->sampleRate());
+    format.setChannelCount(1);
+    format.setSampleSize(16);
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
+    format.setSampleType(QAudioFormat::SignedInt);
+
+    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+    if (!info.isFormatSupported(format)) {
+        return false;
+    }
+
+    m_audioOutput = new QAudioOutput(format, this);
+    connect(m_audioOutput, &QAudioOutput::stateChanged, this, [this](QAudio::State newState) {
+        switch (newState) {
+        case QAudio::IdleState:
+            m_audioOutput->stop();
+            break;
+        case QAudio::StoppedState:
+            if (m_audioOutput->error() != QAudio::NoError) {
+                qWarning() << "Error playing audio:" << m_audioOutput->error();
+            }
+            m_audioBuffer.close();
+            m_synthState = SynthState::Idle;
+            emit synthStateChanged();
+            break;
+        default:
+            break;
+        }
+    });
+
+    return true;
 }
