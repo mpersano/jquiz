@@ -42,6 +42,10 @@ Rectangle {
             quiz.toggleCardReview()
         } else if (event.key == Qt.Key_Tab) {
             quiz.toggleReviewOnly();
+        } else if (event.key == Qt.Key_P) {
+            if (card.state == "ANSWER") {
+                quiz.sayExample()
+            }
         } else {
             if (card.state == "QUESTION") {
                 card.state = "ANSWER";
