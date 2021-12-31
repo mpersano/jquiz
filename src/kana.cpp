@@ -1,10 +1,11 @@
 #include "kana.h"
 
+#include <array>
 #include <cassert>
-#include <cstring>
-#include <cwchar>
 #include <tuple>
 #include <vector>
+
+using namespace std::string_literals;
 
 namespace {
 
@@ -13,17 +14,15 @@ class RomajiToKana
 public:
     RomajiToKana();
 
-    void convert(wchar_t *text, bool fullText) const;
+    std::u32string convert(const std::u32string &text, bool fullText) const;
 
 private:
     void initialize();
-    void trieInsert(const char *romaji, const wchar_t *kana);
-
-    std::pair<const wchar_t *, int> convertToSingleKana(const wchar_t *text) const;
+    void trieInsert(const char *romaji, const char32_t *kana);
 
     struct TrieNode {
-        TrieNode *children['z' - 'a' + 1] = { 0 };
-        const wchar_t *kana = nullptr;
+        std::array<TrieNode *, 'z' - 'a' + 1> children = {};
+        const char32_t *kana = nullptr;
     };
 
     TrieNode *trie = nullptr;
@@ -34,11 +33,11 @@ RomajiToKana::RomajiToKana()
     initialize();
 }
 
-void RomajiToKana::trieInsert(const char *romaji, const wchar_t *kana)
+void RomajiToKana::trieInsert(const char *romaji, const char32_t *kana)
 {
     TrieNode *curNode, **parent = &trie;
 
-    for (const char *p = romaji; *p; p++) {
+    for (const char *p = romaji; *p; ++p) {
         int ch = *p;
 
         assert(ch >= 'a' && ch <= 'z');
@@ -61,38 +60,38 @@ void RomajiToKana::initialize()
 {
     static const struct {
         const char *romaji;
-        const wchar_t *kana;
+        const char32_t *kana;
     } romajiToKana[] {
         // clang-format off
-        {  "a", L"あ" }, {  "i", L"い" }, {  "u", L"う" }, {  "e", L"え" }, {  "o", L"お" },
-        { "ka", L"か" }, { "ki", L"き" }, { "ku", L"く" }, { "ke", L"け" }, { "ko", L"こ" },
-        { "sa", L"さ" }, { "si", L"し" }, { "su", L"す" }, { "se", L"せ" }, { "so", L"そ" },
-        { "shi", L"し" },
-        { "ta", L"た" }, { "ti", L"ち" }, { "tu", L"つ" }, { "te", L"て" }, { "to", L"と" },
-        { "chi", L"ち" }, { "tsu", L"つ" },
-        { "na", L"な" }, { "ni", L"に" }, { "nu", L"ぬ" }, { "ne", L"ね" }, { "no", L"の" },
-        { "ha", L"は" }, { "hi", L"ひ" }, { "fu", L"ふ" }, { "he", L"へ" }, { "ho", L"ほ" },
-        { "ma", L"ま" }, { "mi", L"み" }, { "mu", L"む" }, { "me", L"め" }, { "mo", L"も" },
-        { "ya", L"や" }, { "yu", L"ゆ" }, { "yo", L"よ" },
-        { "ra", L"ら" }, { "ri", L"り" }, { "ru", L"る" }, { "re", L"れ" }, { "ro", L"ろ" },
-        { "wa", L"わ" }, { "wo", L"を" },
-        { "ga", L"が" }, { "gi", L"ぎ" }, { "gu", L"ぐ" }, { "ge", L"げ" }, { "go", L"ご" },
-        { "za", L"ざ" }, { "ji", L"じ" }, { "zu", L"ず" }, { "ze", L"ぜ" }, { "zo", L"ぞ" },
-        { "da", L"だ" }, { "di", L"ぢ" }, { "du", L"づ" }, { "de", L"で" }, { "do", L"ど" },
-        { "ba", L"ば" }, { "bi", L"び" }, { "bu", L"ぶ" }, { "be", L"べ" }, { "bo", L"ぼ" },
-        { "pa", L"ぱ" }, { "pi", L"ぴ" }, { "pu", L"ぷ" }, { "pe", L"ぺ" }, { "po", L"ぽ" },
-        { "kya", L"きゃ" }, { "kyu", L"きゅ" }, { "kyo", L"きょ" },
-        { "sha", L"しゃ" }, { "shu", L"しゅ" }, { "sho", L"しょ" },
-        { "cha", L"ちゃ" }, { "chu", L"ちゅ" }, { "cho", L"ちょ" },
-        { "nya", L"にゃ" }, { "nyu", L"にゅ" }, { "nyo", L"にょ" },
-        { "hya", L"ひゃ" }, { "hyu", L"ひゅ" }, { "hyo", L"ひょ" },
-        { "mya", L"みゃ" }, { "myu", L"みゅ" }, { "myo", L"みょ" },
-        { "rya", L"りゃ" }, { "ryu", L"りゅ" }, { "ryo", L"りょ" },
-        { "gya", L"ぎゃ" }, { "gyu", L"ぎゅ" }, { "gyo", L"ぎょ" },
-        {  "ja", L"じゃ" }, {  "ju", L"じゅ" }, {  "jo", L"じょ" },
-        { "bya", L"びゃ" }, { "byu", L"びゅ" }, { "byo", L"びょ" },
-        { "pya", L"ぴゃ" }, { "pyu", L"ぴゅ" }, { "pyo", L"ぴょ" },
-        {  "nn", L"ん" },
+        {  "a", U"あ" }, {  "i", U"い" }, {  "u", U"う" }, {  "e", U"え" }, {  "o", U"お" },
+        { "ka", U"か" }, { "ki", U"き" }, { "ku", U"く" }, { "ke", U"け" }, { "ko", U"こ" },
+        { "sa", U"さ" }, { "si", U"し" }, { "su", U"す" }, { "se", U"せ" }, { "so", U"そ" },
+        { "shi", U"し" },
+        { "ta", U"た" }, { "ti", U"ち" }, { "tu", U"つ" }, { "te", U"て" }, { "to", U"と" },
+        { "chi", U"ち" }, { "tsu", U"つ" },
+        { "na", U"な" }, { "ni", U"に" }, { "nu", U"ぬ" }, { "ne", U"ね" }, { "no", U"の" },
+        { "ha", U"は" }, { "hi", U"ひ" }, { "fu", U"ふ" }, { "he", U"へ" }, { "ho", U"ほ" },
+        { "ma", U"ま" }, { "mi", U"み" }, { "mu", U"む" }, { "me", U"め" }, { "mo", U"も" },
+        { "ya", U"や" }, { "yu", U"ゆ" }, { "yo", U"よ" },
+        { "ra", U"ら" }, { "ri", U"り" }, { "ru", U"る" }, { "re", U"れ" }, { "ro", U"ろ" },
+        { "wa", U"わ" }, { "wo", U"を" },
+        { "ga", U"が" }, { "gi", U"ぎ" }, { "gu", U"ぐ" }, { "ge", U"げ" }, { "go", U"ご" },
+        { "za", U"ざ" }, { "ji", U"じ" }, { "zu", U"ず" }, { "ze", U"ぜ" }, { "zo", U"ぞ" },
+        { "da", U"だ" }, { "di", U"ぢ" }, { "du", U"づ" }, { "de", U"で" }, { "do", U"ど" },
+        { "ba", U"ば" }, { "bi", U"び" }, { "bu", U"ぶ" }, { "be", U"べ" }, { "bo", U"ぼ" },
+        { "pa", U"ぱ" }, { "pi", U"ぴ" }, { "pu", U"ぷ" }, { "pe", U"ぺ" }, { "po", U"ぽ" },
+        { "kya", U"きゃ" }, { "kyu", U"きゅ" }, { "kyo", U"きょ" },
+        { "sha", U"しゃ" }, { "shu", U"しゅ" }, { "sho", U"しょ" },
+        { "cha", U"ちゃ" }, { "chu", U"ちゅ" }, { "cho", U"ちょ" },
+        { "nya", U"にゃ" }, { "nyu", U"にゅ" }, { "nyo", U"にょ" },
+        { "hya", U"ひゃ" }, { "hyu", U"ひゅ" }, { "hyo", U"ひょ" },
+        { "mya", U"みゃ" }, { "myu", U"みゅ" }, { "myo", U"みょ" },
+        { "rya", U"りゃ" }, { "ryu", U"りゅ" }, { "ryo", U"りょ" },
+        { "gya", U"ぎゃ" }, { "gyu", U"ぎゅ" }, { "gyo", U"ぎょ" },
+        {  "ja", U"じゃ" }, {  "ju", U"じゅ" }, {  "jo", U"じょ" },
+        { "bya", U"びゃ" }, { "byu", U"びゅ" }, { "byo", U"びょ" },
+        { "pya", U"ぴゃ" }, { "pyu", U"ぴゅ" }, { "pyo", U"ぴょ" },
+        {  "nn", U"ん" },
         // clang-format on
     };
 
@@ -100,54 +99,44 @@ void RomajiToKana::initialize()
         trieInsert(p.romaji, p.kana);
 }
 
-std::pair<const wchar_t *, int> RomajiToKana::convertToSingleKana(const wchar_t *text) const
+std::u32string RomajiToKana::convert(const std::u32string &text, bool fullText) const
 {
-    if (*text == L'-') {
-        return { L"゜", 1 };
-    } else {
+    std::u32string result;
+
+    auto it = text.begin(), end = text.end();
+    while (it != end) {
+        bool found = false;
         TrieNode *curNode = trie;
-
-        for (const wchar_t *p = text; *p; p++) {
-            if (*p < L'a' || *p > L'z' ||
-                (curNode = curNode->children[static_cast<int>(*p) - L'a']) == nullptr)
+        for (auto p = it; p != end; ++p) {
+            if (*p < L'a' || *p > L'z')
                 break;
-
-            if (curNode->kana)
-                return { curNode->kana, p - text + 1 };
+            curNode = curNode->children[static_cast<int>(*p) - L'a'];
+            if (!curNode)
+                break;
+            if (curNode->kana) {
+                result.append(curNode->kana);
+                it = std::next(p);
+                found = true;
+                break;
+            }
         }
-
-        return { nullptr, 0 };
-    }
-}
-
-void RomajiToKana::convert(wchar_t *text, bool fullText) const
-{
-    wchar_t *p, *q;
-
-    q = p = text;
-
-    while (*p) {
-        int consumed;
-        const wchar_t *kana;
-        std::tie(kana, consumed) = convertToSingleKana(p);
-
-        if (kana) {
-            for (const wchar_t *r = kana; *r; r++)
-                *q++ = *r;
-            p += consumed;
-        } else if (*p == L'n' && (fullText || p[1] != L'\0') && p[1] != L'y') {
-            *q++ = L'ん';
-            ++p;
-        } else if (wcschr(L"cpstk", *p) && p[1] == *p) {
-            // small 'tsu'
-            *q++ = L'っ';
-            ++p;
-        } else {
-            *q++ = *p++;
+        if (!found) {
+            auto nextIt = std::next(it);
+            const auto isLast = nextIt == end;
+            if (*it == L'n' && ((isLast && fullText) || (!isLast && *nextIt != L'y'))) {
+                result.push_back(L'ん');
+                ++it;
+            } else if (!isLast && (U"cpstk"s.find(*it) != std::u32string::npos && *nextIt == *it)) {
+                // small 'tsu'
+                result.push_back(L'っ');
+                ++it;
+            } else {
+                result.push_back(*it++);
+            }
         }
     }
 
-    *q = L'\0';
+    return result;
 }
 
 } // namespace
@@ -156,15 +145,10 @@ QString romajiToKana(const QString &romajiText, bool fullText, bool katakanaInpu
 {
     static RomajiToKana converter;
 
-    std::vector<wchar_t> buffer(romajiText.size() + 1);
-
-    romajiText.toWCharArray(&buffer[0]);
-    buffer[romajiText.size()] = L'\0';
-
-    converter.convert(buffer.data(), fullText);
+    auto kanaText = converter.convert(romajiText.toStdU32String(), fullText);
 
     if (katakanaInput) {
-        for (auto &ch : buffer) {
+        for (auto &ch : kanaText) {
             constexpr auto HiraganaStart = 0x3040;
             constexpr auto HiraganaEnd = 0x309f;
             constexpr auto KatakanaStart = 0x30a0;
@@ -173,5 +157,5 @@ QString romajiToKana(const QString &romajiText, bool fullText, bool katakanaInpu
         }
     }
 
-    return QString::fromWCharArray(buffer.data());
+    return QString::fromStdU32String(kanaText);
 }
