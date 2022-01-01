@@ -28,7 +28,11 @@ set(jquiz_RCS
     assets/assets.qrc
 )
 
-add_executable(jquiz ${jquiz_SOURCES} ${jquiz_RCS})
+if (WIN32)
+    add_executable(jquiz WIN32 ${jquiz_SOURCES} ${jquiz_RCS})
+else()
+    add_executable(jquiz ${jquiz_SOURCES} ${jquiz_RCS})
+endif()
 
 target_compile_features(jquiz PRIVATE cxx_std_17)
 
