@@ -12,11 +12,16 @@ set(jquiz_SOURCES
     main.cpp
     quiz.cpp
     quiz.h
-    synth.cpp
-    synth.h
-    synththread.cpp
-    synththread.h
 )
+
+if (ENABLE_SPEECH_SYNTH)
+    list(APPEND jquiz_SOURCES
+        synth.cpp
+        synth.h
+        synththread.cpp
+        synththread.h
+    )
+endif()
 
 set(jquiz_RCS
     qml/qml.qrc
@@ -25,15 +30,24 @@ set(jquiz_RCS
 
 add_executable(jquiz ${jquiz_SOURCES} ${jquiz_RCS})
 
-target_compile_features(jquiz PUBLIC cxx_std_17)
+target_compile_features(jquiz PRIVATE cxx_std_17)
+
+if (ENABLE_SPEECH_SYNTH)
+    target_compile_definitions(jquiz PRIVATE ENABLE_SPEECH_SYNTH)
+endif()
 
 target_link_libraries(jquiz
 PRIVATE
-    ThirdParty::htsengine
-    ThirdParty::mecab
-    ThirdParty::openjtalk
     Qt5::Qml
     Qt5::Quick
     Qt5::QuickPrivate
-    Qt5::Multimedia
 )
+
+if (ENABLE_SPEECH_SYNTH)
+    target_link_libraries(jquiz PRIVATE
+        Qt5::Multimedia
+        ThirdParty::htsengine
+        ThirdParty::mecab
+        ThirdParty::openjtalk
+    )
+endif()

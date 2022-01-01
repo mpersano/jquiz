@@ -1,6 +1,8 @@
+#ifdef ENABLE_SPEECH_SYNTH
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
 #include <QAudioOutput>
+#endif
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
@@ -11,13 +13,18 @@
 #include <QTextStream>
 
 #include "quiz.h"
+#ifdef ENABLE_SPEECH_SYNTH
 #include "synththread.h"
+#endif
 
 Quiz::Quiz(QObject *parent)
     : QObject(parent)
+#ifdef ENABLE_SPEECH_SYNTH
     , m_synthThread(new SynthThread(this))
     , m_synthState(m_synthThread->initialized() && initializeAudio() ? SynthState::Idle : SynthState::Error)
+#endif
 {
+#ifdef ENABLE_SPEECH_SYNTH
     connect(m_synthThread, &SynthThread::synthesizedAudio, this, [this](const QByteArray &audioData) {
         Q_ASSERT(m_audioOutput);
         m_audioBuffer.setData(audioData);
@@ -26,6 +33,7 @@ Quiz::Quiz(QObject *parent)
         m_synthState = SynthState::Playing;
         emit synthStateChanged();
     });
+#endif
 }
 
 Quiz::~Quiz()
@@ -201,7 +209,9 @@ bool Quiz::canShowCard(const Card &c) const
 
 void Quiz::nextCard()
 {
+#ifdef ENABLE_SPEECH_SYNTH
     stopSynth();
+#endif
 
     auto *randomGenerator = QRandomGenerator::global();
 
@@ -290,6 +300,7 @@ int Quiz::countReviewCards() const
                          [this](const Card &c) { return c.deck == Deck::Review && canShowCard(c); });
 }
 
+#ifdef ENABLE_SPEECH_SYNTH
 void Quiz::sayExample()
 {
     if (m_curExample && m_synthState == SynthState::Idle) {
@@ -348,3 +359,4 @@ bool Quiz::initializeAudio()
 
     return true;
 }
+#endif

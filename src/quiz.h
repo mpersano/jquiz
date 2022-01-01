@@ -13,7 +13,9 @@ class Quiz : public QObject
     Q_PROPERTY(QVariantMap example READ example NOTIFY exampleChanged)
     Q_PROPERTY(QString statusLine READ statusLine NOTIFY statusLineChanged)
     Q_PROPERTY(bool katakanaInput READ katakanaInput WRITE setKatakanaInput NOTIFY katakanaInputChanged)
+#ifdef ENABLE_SPEECH_SYNTH
     Q_PROPERTY(SynthState synthState READ synthState NOTIFY synthStateChanged)
+#endif
 
 public:
     Quiz(QObject *parent = nullptr);
@@ -46,8 +48,10 @@ public:
     Q_INVOKABLE void setCardReview();
     Q_INVOKABLE void toggleCardMastered();
     Q_INVOKABLE void toggleReviewOnly();
+#ifdef ENABLE_SPEECH_SYNTH
     Q_INVOKABLE void sayExample();
     Q_INVOKABLE void stopSynth();
+#endif
 
     QVariantMap card() const;
     QVariantMap example() const;
@@ -60,7 +64,9 @@ signals:
     void exampleChanged();
     void statusLineChanged();
     void katakanaInputChanged(bool katakanaInput);
+#ifdef ENABLE_SPEECH_SYNTH
     void synthStateChanged();
+#endif
 
 private:
     enum class Deck {
@@ -87,7 +93,9 @@ private:
     bool canShowCard(const Card &c) const;
     int countVisibleCards() const;
     int countReviewCards() const;
+#ifdef ENABLE_SPEECH_SYNTH
     bool initializeAudio();
+#endif
 
     CardFilters m_cardFilters = CardFilter::None;
     bool m_katakanaInput = false;
@@ -96,10 +104,12 @@ private:
     Card *m_curCard = nullptr;
     const Example *m_curExample = nullptr;
     QString m_deckPath;
+#ifdef ENABLE_SPEECH_SYNTH
     SynthThread *m_synthThread;
     QBuffer m_audioBuffer;
     QAudioOutput *m_audioOutput = nullptr;
     SynthState m_synthState;
+#endif
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Quiz::CardFilters)
