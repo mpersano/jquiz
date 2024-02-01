@@ -40,7 +40,7 @@ Rectangle {
                 visible: true
                 katakanaInput: quiz.katakanaInput
 
-                Keys.onPressed: {
+                Keys.onPressed: function(event) {
                     if (event.key == Qt.Key_Return) {
                         reading.convertToKana(true);
 
