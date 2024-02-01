@@ -1,7 +1,7 @@
 #ifdef ENABLE_SPEECH_SYNTH
-#include <QAudioDeviceInfo>
-#include <QAudioFormat>
 #include <QAudioOutput>
+#include <QAudioSink>
+#include <QMediaDevices>
 #endif
 #include <QDebug>
 #include <QFile>
@@ -26,10 +26,10 @@ Quiz::Quiz(QObject *parent)
 {
 #ifdef ENABLE_SPEECH_SYNTH
     connect(m_synthThread, &SynthThread::synthesizedAudio, this, [this](const QByteArray &audioData) {
-        Q_ASSERT(m_audioOutput);
+        Q_ASSERT(m_audioSink);
         m_audioBuffer.setData(audioData);
         m_audioBuffer.open(QIODevice::ReadOnly);
-        m_audioOutput->start(&m_audioBuffer);
+        m_audioSink->start(&m_audioBuffer);
         m_synthState = SynthState::Playing;
         emit synthStateChanged();
     });
@@ -181,7 +181,7 @@ void Quiz::writeDeck() const
 
     QTextStream stream(&file);
 
-    for (const auto &card : qAsConst(m_cards)) {
+    for (const auto &card : std::as_const(m_cards)) {
         if (card.deck != Deck::Normal) {
             stream << card.kanji << QChar(':')
                    << (card.deck == Deck::Review ? QChar('R') : QChar('M')) << QChar('\n');
@@ -313,8 +313,8 @@ void Quiz::sayExample()
 void Quiz::stopSynth()
 {
     if (m_synthState == SynthState::Playing) {
-        Q_ASSERT(m_audioOutput);
-        m_audioOutput->stop();
+        Q_ASSERT(m_audioSink);
+        m_audioSink->stop();
     }
 }
 
@@ -328,25 +328,22 @@ bool Quiz::initializeAudio()
     QAudioFormat format;
     format.setSampleRate(m_synthThread->sampleRate());
     format.setChannelCount(1);
-    format.setSampleSize(16);
-    format.setCodec("audio/pcm");
-    format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setSampleType(QAudioFormat::SignedInt);
+    format.setSampleFormat(QAudioFormat::Int16);
 
-    QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+    QAudioDevice info(QMediaDevices::defaultAudioOutput());
     if (!info.isFormatSupported(format)) {
         return false;
     }
 
-    m_audioOutput = new QAudioOutput(format, this);
-    connect(m_audioOutput, &QAudioOutput::stateChanged, this, [this](QAudio::State newState) {
+    m_audioSink = new QAudioSink(format, this);
+    connect(m_audioSink, &QAudioSink::stateChanged, this, [this](QAudio::State newState) {
         switch (newState) {
         case QAudio::IdleState:
-            m_audioOutput->stop();
+            m_audioSink->stop();
             break;
         case QAudio::StoppedState:
-            if (m_audioOutput->error() != QAudio::NoError) {
-                qWarning() << "Error playing audio:" << m_audioOutput->error();
+            if (m_audioSink->error() != QAudio::NoError) {
+                qWarning() << "Error playing audio:" << m_audioSink->error();
             }
             m_audioBuffer.close();
             m_synthState = SynthState::Idle;

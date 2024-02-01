@@ -3,7 +3,7 @@
 #include <QBuffer>
 #include <QVariantMap>
 
-class QAudioOutput;
+class QAudioSink;
 class SynthThread;
 
 class Quiz : public QObject
@@ -107,7 +107,7 @@ private:
 #ifdef ENABLE_SPEECH_SYNTH
     SynthThread *m_synthThread;
     QBuffer m_audioBuffer;
-    QAudioOutput *m_audioOutput = nullptr;
+    QAudioSink *m_audioSink = nullptr;
     SynthState m_synthState;
 #endif
 };

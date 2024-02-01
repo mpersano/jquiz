@@ -26,3 +26,8 @@ To move cards between decks, use the following keys:
 * Delete: move card into or out of the mastered deck.
 * Space: move card to the review deck.
 * Tab: toggle review mode (only show cards in the review deck)
+
+To use the speech synth, you'll need dictionary and voice files. On Ubuntu:
+```
+sudo apt install hts-voice-nitech-jp-atr503-m001 open-jtalk-mecab-naist-jdic
+```

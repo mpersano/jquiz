@@ -1,8 +1,4 @@
-find_package(Qt5 COMPONENTS Qml Quick Multimedia REQUIRED)
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+find_package(Qt6 COMPONENTS Qml Quick Multimedia REQUIRED)
 
 set(jquiz_SOURCES
     kana.cpp
@@ -34,7 +30,12 @@ else()
     add_executable(jquiz ${jquiz_SOURCES} ${jquiz_RCS})
 endif()
 
-target_compile_features(jquiz PRIVATE cxx_std_17)
+set_target_properties(
+    jquiz
+    PROPERTIES CXX_STANDARD 20
+               AUTOMOC ON
+               AUTORCC ON
+)
 
 if (ENABLE_SPEECH_SYNTH)
     target_compile_definitions(jquiz PRIVATE ENABLE_SPEECH_SYNTH)
@@ -42,14 +43,14 @@ endif()
 
 target_link_libraries(jquiz
 PRIVATE
-    Qt5::Qml
-    Qt5::Quick
-    Qt5::QuickPrivate
+    Qt::Qml
+    Qt::Quick
+    Qt::QuickPrivate
 )
 
 if (ENABLE_SPEECH_SYNTH)
     target_link_libraries(jquiz PRIVATE
-        Qt5::Multimedia
+        Qt::Multimedia
         ThirdParty::htsengine
         ThirdParty::mecab
         ThirdParty::openjtalk

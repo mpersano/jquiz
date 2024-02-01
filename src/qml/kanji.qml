@@ -35,7 +35,7 @@ Rectangle {
         }
     ]
 
-    Keys.onPressed: {
+    Keys.onPressed: function(event) {
         if (event.key == Qt.Key_Delete) {
             quiz.toggleCardMastered()
         } else if (event.key == Qt.Key_Space) {
